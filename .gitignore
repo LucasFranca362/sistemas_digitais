@@ -5,6 +5,7 @@ transcript
 *.mti
 *.mpf
 modelsim.ini
+apoio/
 
 # Arquivos de backup e logs genéricos
 *.bak
