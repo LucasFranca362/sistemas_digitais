@@ -1,0 +1,108 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity contador0a6 is
+    port( clock : in STD_LOGIC;
+          reset : in STD_LOGIC;
+          enable : in STD_LOGIC;
+          rci : in STD_LOGIC;
+          load : in STD_LOGIC;
+          D : in STD_LOGIC_VECTOR(3 downto 0);
+          Q : out STD_LOGIC_VECTOR(3 downto 0);
+          rco : out STD_LOGIC );
+end contador0a6;
+
+architecture contador4bits_arch of contador0a6 is
+    type estado is (ST0,ST1,ST2,ST3, ST4, ST5, ST6);
+    signal currentState, nextState, loadState : estado;
+begin
+
+    with D select
+        loadState <= ST0 when "0000",
+                     ST1 when "0001",
+                     ST2 when "0010",
+                     ST3 when "0011",
+		     ST4 when "0100",
+		     ST5 when "0101",
+		     ST6 when "0110",
+                     ST0 when others;
+
+    sync_proc: process(clock)
+    begin
+        if rising_edge(clock) then
+            currentState <= nextState;
+        end if;
+    end process sync_proc;
+
+    comb_proc: process(currentState,reset,enable,rci,load,loadState)
+    begin
+        case currentState is
+            
+            when ST0 =>
+                Q <= "0000";
+                rco <= '1';
+                if (reset = '1') then nextState <= ST0;
+                elsif (load = '1') then nextState <= loadState;
+                elsif ((enable = '0') and (rci = '0')) then nextState <= ST1;
+                else nextState <= ST0;
+                end if;
+                
+            when ST1 =>
+                Q <= "0001";
+                rco <= '1';
+                if (reset = '1') then nextState <= ST0;
+                elsif (load = '1') then nextState <= loadState;
+                elsif ((enable = '0') and (rci = '0')) then nextState <= ST2;
+                else nextState <= ST1;
+                end if;
+                
+            when ST2 =>
+                Q <= "0010";
+                rco <= '1';
+                if (reset = '1') then nextState <= ST0;
+                elsif (load = '1') then nextState <= loadState;
+                elsif ((enable = '0') and (rci = '0')) then nextState <= ST3;
+                else nextState <= ST2;
+                end if;
+                
+            when ST3 =>
+                Q <= "0011";
+                rco <= '1';
+                if (reset = '1') then nextState <= ST0;
+                elsif (load = '1') then nextState <= loadState;
+                elsif ((enable = '0') and (rci = '0')) then nextState <= ST4;
+                else nextState <= ST3;
+                end if;
+
+	    when ST4 =>
+                Q <= "0100";
+                rco <= '1';
+                if (reset = '1') then nextState <= ST0;
+                elsif (load = '1') then nextState <= loadState;
+                elsif ((enable = '0') and (rci = '0')) then nextState <= ST5;
+                else nextState <= ST4;
+                end if;
+                
+            when ST5 =>
+                Q <= "0101";
+                if(rci = '0') then rco <= '0';
+		else rco <= '1';
+		end if; 
+                if (reset = '1') then nextState <= ST0;
+                elsif (load = '1') then nextState <= loadState;
+                elsif ((enable = '0') and (rci = '0')) then nextState <= ST0;
+                else nextState <= ST5;
+                end if;                
+                                
+            when others =>
+                Q <= "0000";
+                rco <= '1';
+                if (reset = '1') then nextState <= ST0;
+                elsif (load = '1') then nextState <= loadState;
+                elsif ((enable = '0') and (rci = '0')) then nextState <= ST1;
+                else nextState <= ST0;
+                end if;
+                
+        end case;
+    end process comb_proc;
+end contador4bits_arch;

@@ -1,0 +1,11 @@
+# Ignorar arquivos de compilação e simulação do ModelSim / Questa
+work/
+*.wlf
+transcript
+*.mti
+*.mpf
+modelsim.ini
+
+# Arquivos de backup e logs genéricos
+*.bak
+*.log
